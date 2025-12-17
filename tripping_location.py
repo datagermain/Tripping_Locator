@@ -61,6 +61,9 @@ def prefer_fgb(paths):
     return list(by_stem.values())
 
 def find_file(folder, keyword):
+    """Find files containing keyword (case-insensitive)."""
+    keyword_lower = keyword.lower()
+    matches = []
     pats = [
         f"**/*{keyword}*.fgb",
         f"**/*{keyword}*.geojson",
