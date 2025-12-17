@@ -438,12 +438,12 @@ btn = st.button("Compute path & point")
 # ------------- Map base -------------
 fig = go.Figure()
 
-# draw HV lines (uniform color) - updated to use scattermap instead of scattermapbox
+# draw HV lines (uniform color) - FIXED: Changed Scattermap to Scattermapbox
 first = True
 for geom in hvl_ll.geometry:
     if isinstance(geom, LineString):
         xs, ys = zip(*geom.coords)
-        fig.add_trace(go.Scattermap(
+        fig.add_trace(go.Scattermapbox(
             lon=list(xs), lat=list(ys), mode="lines",
             line=dict(width=ln_width, color=hv_color),
             name="HV Line", showlegend=first, hoverinfo="skip"
@@ -452,17 +452,17 @@ for geom in hvl_ll.geometry:
     elif isinstance(geom, MultiLineString):
         for part in geom.geoms:
             xs, ys = zip(*part.coords)
-            fig.add_trace(go.Scattermap(
+            fig.add_trace(go.Scattermapbox(
                 lon=list(xs), lat=list(ys), mode="lines",
                 line=dict(width=ln_width, color=hv_color),
                 name="HV Line", showlegend=first, hoverinfo="skip"
             ))
             first = False
 
-# draw substations WITH LABELS
+# draw substations WITH LABELS - FIXED: Changed Scattermap to Scattermapbox
 subs_ll["lat"] = subs_ll.geometry.y
 subs_ll["lon"] = subs_ll.geometry.x
-fig.add_trace(go.Scattermap(
+fig.add_trace(go.Scattermapbox(
     lat=subs_ll["lat"], lon=subs_ll["lon"], mode="markers+text",
     marker=dict(size=pt_size),
     text=subs_ll[sub_label],
@@ -504,7 +504,7 @@ if btn and src_name != dst_name:
         ).to_crs(4326)
         path_lon = [pt.x for pt in pts_tm_gdf.geometry]
         path_lat = [pt.y for pt in pts_tm_gdf.geometry]
-        fig.add_trace(go.Scattermap(
+        fig.add_trace(go.Scattermapbox(
             lon=path_lon, lat=path_lat, mode="lines+markers",
             line=dict(width=max(ln_width+1, 4), color=path_color),
             name="Shortest path", hoverinfo="skip"
@@ -543,7 +543,7 @@ if btn and src_name != dst_name:
         hover_text = "<br>".join(hover_lines)
 
         label_text = f"{req_m/1000:.3f} km from start" if unit == "kilometers" else f"{int(req_m)} m from start"
-        fig.add_trace(go.Scattermap(
+        fig.add_trace(go.Scattermapbox(
             lon=[pop_lon], lat=[pop_lat], mode="markers+text",
             marker=dict(size=max(pt_size, 10)),
             text=[label_text],
