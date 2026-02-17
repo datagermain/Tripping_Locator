@@ -29,43 +29,59 @@ st.markdown(
 )
 
 BASE_DIR = Path(__file__).parent.resolve()
-root = st.sidebar.text_input("Folder with layers (.fgb / .geojson / .shp)", value=str(BASE_DIR))
-map_zoom   = st.sidebar.slider("Map zoom", 8, 15, 10)
-pt_size    = st.sidebar.slider("Substation marker size", 6, 20, 10)
-ln_width   = st.sidebar.slider("HV line width", 1, 8, 3)
-unit       = st.sidebar.selectbox("Distance unit", ["meters", "kilometers"], index=0)
-dist_value = st.sidebar.number_input("Distance from start", min_value=0.0, value=0.0, step=100.0)
-hv_color   = st.sidebar.color_picker("HV line color", "#2E86AB")
-path_color = st.sidebar.color_picker("Shortest path color", "#16A085")
-SNAP_TOL   = st.sidebar.number_input("Endpoint snap tolerance (m)", 0.0, 20.0, 3.0, 1.0)
+BASE_DIR = Path(__file__).parent.resolve()
 
-# ============== DEBUG SECTION ==============
-st.sidebar.markdown("---")
-st.sidebar.subheader("🔍 DEBUG: File Discovery")
-st.sidebar.write(f"Python: {sys.version.split()[0]}")
-st.sidebar.write(f"Current dir: {os.getcwd()}")
-st.sidebar.write(f"Base dir: {BASE_DIR}")
-st.sidebar.write(f"Root input: {root}")
+# -------- Row 1 --------
+col1, col2, col3 = st.columns(3)
 
-# List ALL files in current directory
-st.sidebar.write("**All files in directory:**")
-try:
-    all_files = os.listdir('.')
-    for i, file in enumerate(sorted(all_files)[:15], 1):
-        if os.path.exists(file):
-            size = os.path.getsize(file)
-            size_str = f"{size/1024/1024:.1f} MB" if size > 1000000 else f"{size/1024:.0f} KB"
-            st.sidebar.write(f"{i:2}. {file} ({size_str})")
-            if 'hv' in file.lower() and 'line' in file.lower():
-                st.sidebar.write(f"   ⚡ HV LINE DETECTED!")
-            if 'sub' in file.lower() and 'station' in file.lower():
-                st.sidebar.write(f"   ⚡ SUBSTATION DETECTED!")
-        else:
-            st.sidebar.write(f"{i:2}. {file} (does not exist)")
-    if len(all_files) > 15:
-        st.sidebar.write(f"... and {len(all_files)-15} more files")
-except Exception as e:
-    st.sidebar.error(f"Error listing files: {e}")
+with col1:
+    root = st.text_input(
+        "Folder with layers (.fgb / .geojson / .shp)",
+        value=str(BASE_DIR)
+    )
+
+with col2:
+    map_zoom = st.slider("Map zoom", 8, 15, 10)
+
+with col3:
+    pt_size = st.slider("Substation marker size", 6, 20, 10)
+
+# -------- Row 2 --------
+col4, col5, col6 = st.columns(3)
+
+with col4:
+    ln_width = st.slider("HV line width", 1, 8, 3)
+
+with col5:
+    unit = st.selectbox("Distance unit", ["meters", "kilometers"], index=0)
+
+with col6:
+    dist_value = st.number_input(
+        "Distance from start",
+        min_value=0.0,
+        value=0.0,
+        step=100.0
+    )
+
+# -------- Row 3 --------
+col7, col8, col9 = st.columns(3)
+
+with col7:
+    hv_color = st.color_picker("HV line color", "#2E86AB")
+
+with col8:
+    path_color = st.color_picker("Shortest path color", "#16A085")
+
+with col9:
+    SNAP_TOL = st.number_input(
+        "Endpoint snap tolerance (m)",
+        min_value=0.0,
+        max_value=20.0,
+        value=3.0,
+        step=1.0
+    )
+
+
 
 # ---- CRS (Rwanda TM, meters) if a layer lacks CRS ----
 RWANDA_TM30 = CRS.from_proj4(
