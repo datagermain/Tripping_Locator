@@ -22,11 +22,6 @@ except Exception:
 # ---------------- UI ----------------
 st.set_page_config(page_title="HV Network Paths", layout="wide")
 st.title("⚡ Substations & HV Lines — Path Distance")
-st.markdown(
-    "Pick **From** and **To** substations, compute distance **along HV lines**, "
-    "and place a marker at a given distance from the start. Popup shows Lat/Lon "
-    "and Village/Cell/Sector/District if present in the village layer."
-)
 
 BASE_DIR = Path(__file__).parent.resolve()
 BASE_DIR = Path(__file__).parent.resolve()
