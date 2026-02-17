@@ -20,22 +20,59 @@ except Exception:
 # ---------------- UI ----------------
 st.set_page_config(page_title="HV Network Paths", layout="wide")
 st.title("⚡ Substations & HV Lines — Path Distance")
-st.markdown(
-    "Pick **From** and **To** substations, compute distance **along HV lines**, "
-    "and place a marker at a given distance from the start. Popup shows Lat/Lon "
-    "and Village/Cell/Sector/District if present in the village layer."
-)
 
 BASE_DIR = Path(__file__).parent.resolve()
-root = st.sidebar.text_input("Folder with layers (.fgb / .geojson / .shp)", value=str(BASE_DIR))
-map_zoom   = st.sidebar.slider("Map zoom", 8, 15, 10)
-pt_size    = st.sidebar.slider("Substation marker size", 6, 20, 10)
-ln_width   = st.sidebar.slider("HV line width", 1, 8, 3)
-unit       = st.sidebar.selectbox("Distance unit", ["meters", "kilometers"], index=0)
-dist_value = st.sidebar.number_input("Distance from start", min_value=0.0, value=0.0, step=100.0)
-hv_color   = st.sidebar.color_picker("HV line color", "#2E86AB")
-path_color = st.sidebar.color_picker("Shortest path color", "#16A085")
-SNAP_TOL   = st.sidebar.number_input("Endpoint snap tolerance (m)", 0.0, 20.0, 3.0, 1.0)
+
+# -------- Row 1 --------
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    root = st.text_input(
+        "Folder with layers (.fgb / .geojson / .shp)",
+        value=str(BASE_DIR)
+    )
+
+with col2:
+    map_zoom = st.slider("Map zoom", 8, 15, 10)
+
+with col3:
+    pt_size = st.slider("Substation marker size", 6, 20, 10)
+
+# -------- Row 2 --------
+col4, col5, col6 = st.columns(3)
+
+with col4:
+    ln_width = st.slider("HV line width", 1, 8, 3)
+
+with col5:
+    unit = st.selectbox("Distance unit", ["meters", "kilometers"], index=0)
+
+with col6:
+    dist_value = st.number_input(
+        "Distance from start",
+        min_value=0.0,
+        value=0.0,
+        step=100.0
+    )
+
+# -------- Row 3 --------
+col7, col8, col9 = st.columns(3)
+
+with col7:
+    hv_color = st.color_picker("HV line color", "#2E86AB")
+
+with col8:
+    path_color = st.color_picker("Shortest path color", "#16A085")
+
+with col9:
+    SNAP_TOL = st.number_input(
+        "Endpoint snap tolerance (m)",
+        min_value=0.0,
+        max_value=20.0,
+        value=3.0,
+        step=1.0
+    )
+
 
 # ---- CRS (Rwanda TM, meters) if a layer lacks CRS ----
 RWANDA_TM30 = CRS.from_proj4(
